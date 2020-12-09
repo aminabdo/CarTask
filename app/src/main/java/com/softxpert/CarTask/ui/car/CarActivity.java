@@ -107,7 +107,8 @@ public class CarActivity extends AppCompatActivity implements SwipeRefreshLayout
                             loading[0] = true;
                         }
                     }
-                    Log.e(TAG, "onScrolled: ");
+                    Log.e(TAG, "onScrolled: page ---> "+currentPage);
+                    currentPage ++;
                     viewModel.getCars(currentPage);
                 }
             }
