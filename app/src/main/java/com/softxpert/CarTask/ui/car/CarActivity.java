@@ -1,10 +1,8 @@
 package com.softxpert.CarTask.ui.car;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -40,38 +38,30 @@ public class CarActivity extends AppCompatActivity implements SwipeRefreshLayout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initUI();
-
-
-        //setupSwipe();
-
-
-        initViewModel();
-
-
+        setupUI();
+        setupViewModel();
 
     }
 
-    private void initUI() {
+    private void setupUI() {
         recyclerView = findViewById(R.id.pokemon_recyclerView);
         swipeRefresh = findViewById(R.id.swipe_view);
-        adapter = new CarAdapter(this);
-        recyclerView.setAdapter(adapter);
+//        adapter = new CarAdapter(this);
+//        recyclerView.setAdapter(adapter);
 
 
         swipeRefresh.setOnRefreshListener(this);
-        recyclerView.setHasFixedSize(true);
-        // use a linear layout manager
+//        recyclerView.setHasFixedSize(true);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new CarAdapter(this);
         recyclerView.setAdapter(adapter);
 
-
         setupPagination(layoutManager);
     }
 
-    private void initViewModel() {
+    private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(CarViewModel.class);
 
         viewModel.getCars(currentPage);
@@ -95,6 +85,9 @@ public class CarActivity extends AppCompatActivity implements SwipeRefreshLayout
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0) { //check for scroll down
+
+
+
                     visibleItemCount[0] = layoutManager.getChildCount();
                     itemCount = layoutManager.getItemCount();
                     pastVisiblesItems[0] = layoutManager.findFirstVisibleItemPosition();
@@ -102,29 +95,45 @@ public class CarActivity extends AppCompatActivity implements SwipeRefreshLayout
                     if (loading[0]) {
                         if ((visibleItemCount[0] + pastVisiblesItems[0]) >= totalItemCount[0]) {
                             loading[0] = false;
+
+                            Log.e(TAG, "onScrolled: page ---> "+currentPage);
+                            currentPage ++;
+                            viewModel.getCars(currentPage);
+                            Toast.makeText(CarActivity.this, "scroll", Toast.LENGTH_SHORT).show();
+
                             Log.v("...", "Last Item Wow !");
 
                             loading[0] = true;
                         }
                     }
-                    Log.e(TAG, "onScrolled: page ---> "+currentPage);
-                    currentPage ++;
-                    viewModel.getCars(currentPage);
+
                 }
             }
         });
+
 //        recyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
 //            @Override
 //            protected void loadMoreItems() {
+//                if(isLoading == true || isLastPage == true){
+//                    Log.e(TAG, "loadMoreItems: isloading");
+//                    return;
+//                }
 //                isLoading = true;
-//                currentPage++;
 //
-//                viewModel.getCars(currentPage);
+//                Log.e(TAG, "onScrolled: page ---> "+currentPage);
+//                currentPage ++;
+//                //viewModel.getCars(currentPage);
+//                Toast.makeText(CarActivity.this, "scroll", Toast.LENGTH_SHORT).show();
+//
+//                //viewModel.getCars(currentPage);
+//
 //            }
+//
 //            @Override
 //            public boolean isLastPage() {
 //                return isLastPage;
 //            }
+//
 //            @Override
 //            public boolean isLoading() {
 //                return isLoading;
@@ -139,7 +148,7 @@ public class CarActivity extends AppCompatActivity implements SwipeRefreshLayout
         currentPage = 1;
         isLastPage = false;
         adapter.clear();
-
+        isLoading = true;
         viewModel.getCars(currentPage);
         swipeRefresh.setRefreshing(false);
     }

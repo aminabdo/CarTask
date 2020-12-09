@@ -24,7 +24,6 @@ public class CarViewModel extends ViewModel {
     private MutableLiveData<ArrayList<Car>> carList = new MutableLiveData<>();
     //private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
-
     @ViewModelInject
     public CarViewModel(Repository repository) {
         this.repository = repository;
@@ -33,7 +32,6 @@ public class CarViewModel extends ViewModel {
     public MutableLiveData<ArrayList<Car>> getCarList() {
         return carList;
     }
-
 
     @SuppressLint("CheckResult")
     public void getCars(int page) {
@@ -72,9 +70,5 @@ public class CarViewModel extends ViewModel {
                         error -> Log.e("viwModel", error.getMessage()));
         //isLoading.postValue(false);
     }
-
-
-
-
 
 }
